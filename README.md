@@ -12,11 +12,11 @@ Accurate short-term load forecasting directly reduces utility imbalance penaltie
 | Model | MASE (Test) | RMSE (kW) | MAE (kW) |
 |---|---|---|---|
 | 🥇 Random Forest | **1.12** | 11,999 | 7,608 |
-| Linear Regression | 1.99 | 21,871 | — |
-| SARIMA | 3.80 | 36,212 | — |
-| ETS (Holt-Winters) | 7.17 | — | — |
-| Seasonal Naïve | ~3.2 | — | 24,598 |
-| Naïve | 9.02 | — | 61,177 |
+| Linear Regression | 1.99 | 21,871 | - |
+| SARIMA | 3.80 | 36,212 | - |
+| ETS (Holt-Winters) | 7.17 | - | - |
+| Seasonal Naïve | ~3.2 | - | 24,598 |
+| Naïve | 9.02 | - | 61,177 |
 
 > **Random Forest achieves an 87.6% reduction in MAE over the Naïve baseline.**  
 > MASE < 1.0 = beats naïve; lower is better.
@@ -29,28 +29,28 @@ Accurate short-term load forecasting directly reduces utility imbalance penaltie
 | Source | [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/321/electricityloaddiagrams20112014) |
 | File | `LD2011_2014.txt` |
 | Raw Resolution | 15-minute intervals |
-| Time Span | January 2011 – December 2014 |
+| Time Span | January 2011 - December 2014 |
 | Customers | 370 Portuguese electricity consumers |
 | Aggregated Series | 35,064 hourly observations |
 | Units | Kilowatts (kW) |
 ---
 ## 🧪 Model Families Compared
 
-### Family 1 — Naïve Baselines
+### Family 1 - Naïve Baselines
 - **Naïve**: Carries last observed value forward (performance floor)
 - **Seasonal Naïve (SNaïve)**: Uses same hour from the prior day
 
-### Family 2 — Exponential Smoothing (ETS / Holt-Winters)
-- Auto-selected via AIC: `ETS(A,Ad,A)` — additive error, damped trend, additive seasonality
+### Family 2 - Exponential Smoothing (ETS / Holt-Winters)
+- Auto-selected via AIC: `ETS(A,Ad,A)` - additive error, damped trend, additive seasonality
 - Box-Cox transformation applied (λ = −0.44) for variance stabilization
 
-### Family 3 — Seasonal ARIMA (SARIMA)
-- Final spec: `ARIMA(3,0,1)(2,1,1)[24]` — selected via AICc with full parameter search
+### Family 3 - Seasonal ARIMA (SARIMA)
+- Final spec: `ARIMA(3,0,1)(2,1,1)[24]`  selected via AICc with full parameter search
 - Seasonal period s = 24 hours; one seasonal difference (D=1)
 
-### Family 4 — Machine Learning
-- **Multiple Linear Regression** — interpretable lag-feature baseline
-- **Random Forest** (200 trees) — captures nonlinear lag interactions
+### Family 4 - Machine Learning
+- **Multiple Linear Regression** - interpretable lag-feature baseline
+- **Random Forest** (200 trees) - captures nonlinear lag interactions
 - Features: lags 1–24, lag 168 (weekly), sin/cos hour encodings, day-of-week indicators
 
 ---
@@ -68,14 +68,14 @@ Rolling-Origin Cross-Validation (14 folds) → Model Selection → 168-hr Foreca
 ```
 
 ### Preprocessing Steps
-1. **Aggregation** — arithmetic mean of four 15-min intervals per hour
-2. **Missing Values** — forward-fill (<0.3% of records affected)
-3. **Stationarity** — ADF test: statistic = −4.95, p < 0.01 (level-stationary)
-4. **Variance Stabilization** — Box-Cox with λ = −0.44
-5. **Seasonal Differencing** — D = 1 at s = 24 (for SARIMA only)
+1. **Aggregation** - arithmetic mean of four 15-min intervals per hour
+2. **Missing Values** - forward-fill (<0.3% of records affected)
+3. **Stationarity** - ADF test: statistic = −4.95, p < 0.01 (level-stationary)
+4. **Variance Stabilization** - Box-Cox with λ = −0.44
+5. **Seasonal Differencing** - D = 1 at s = 24 (for SARIMA only)
 
 ### Evaluation Metrics
-- **Primary:** MASE (Mean Absolute Scaled Error) — scale-independent, interpretable
+- **Primary:** MASE (Mean Absolute Scaled Error) - scale-independent, interpretable
 - **Secondary:** RMSE, MAE, MAPE
 - **Validation:** 14-fold rolling-origin cross-validation
 
